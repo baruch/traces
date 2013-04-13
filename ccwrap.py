@@ -179,7 +179,10 @@ def main():
         if os.getenv("TRACE_NO_UNLINK_PPFILE", "") == "":
             # Delete the pp.i file only if the clang invocation was successful
             if clang_ret == 0:
-               os.unlink(out_pp_file)
+               try:
+                   os.unlink(out_pp_file)
+               except OSError:
+                   pass
 
 if __name__ == "__main__":
     sys.exit(main())
