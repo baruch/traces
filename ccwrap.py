@@ -41,9 +41,9 @@ def translate(pp_file, out_pp_file, language, arch_triplet, cflags):
     try:
         output = subprocess.check_output(args, stderr = subprocess.STDOUT)
     except subprocess.CalledProcessError, e:
-        print 'clang returned', e.returncode
-        print 'Args:', ' '.join(args)
-        print 'Output:', e.output
+        print >>sys.stderr, 'clang returned', e.returncode
+        print >>sys.stderr, 'Args:', ' '.join(args)
+        print >>sys.stderr, 'Output:', e.output
         return 1
     
     return 0
@@ -70,7 +70,7 @@ def maybe_translate(pp_file, out_pp_file, language, arch_triplet, cflags):
     try:
         return translate(pp_file, out_pp_file, language, arch_triplet, cflags)
     except Error, e:
-        print e.args[0]
+        print >>sys.stderr, e.args[0]
         return -1
 
 
