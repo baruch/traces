@@ -172,6 +172,7 @@ def main():
 
     xargs = list(args)
     output_file = xargs[args.index('-o') + 1]
+    global script_file
     script_file = output_file + '.lds'
     f = open(script_file, 'w')
     for line in linker_script_with_additions:
