@@ -3,18 +3,20 @@ Traces is an API tracing framework for Linux C/C++ applications.
 Installation
 ------------
 
-Requirements :
+## Requirements
 
-* gcc
-* clang
+* gcc -- to build the traced code
+* clang -- to parse the code and modify it for tracing
 * python-ctypeslib for  h2xml.py 
 * automake, autoconf, autoheaders, libtool
 
 
+## Configure and build on debian with llvm 3.7
 
-Configure on debian with llvm 3.7
+    sudo apt-get install libclang-3.7-dev llvm-3.7-dev clang gcc python-ctypeslib automake autoconf libtool
     ./autogen.sh
     ./configure --with-llvm-version=3.7 --with-llvm-prefix=/usr/
+    make -j4
     
 
 History
