@@ -109,9 +109,9 @@ TraceParam(llvm::raw_ostream &out,
         trace_call       = source.trace_call;
         //TODO:Diags            = source.Diags;
         
-        type_name = type_name;
-        is_pointer = is_pointer;
-        is_reference = is_reference;
+        type_name = source.type_name;
+        is_pointer = source.is_pointer;
+        is_reference = source.is_reference;
         return *this;
     }
     
