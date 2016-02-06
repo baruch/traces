@@ -9,7 +9,7 @@ LDFLAGS=-L$(TRACES_ROOT_DIR)
 all: demo
 
 demo: demo.o
-	$(CCWRAP) g++ $(LDFLAGS) demo.o ../libtraceuser.a -lrt -L. -o demo
+	$(CC) $(LDFLAGS) demo.o ../libtrace/.libs/libtrace_user.a -lrt -L. -o demo
 
 clean:
 	rm demo.o demo
