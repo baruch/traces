@@ -50,7 +50,7 @@ static const Type *get_expr_type(const Expr *expr)
     return expr->getType().getCanonicalType().split().Ty;
 }
 
- std::string castTo(LangOptions const& langOpts, std::string orig_expr, std::string cast_type)
+ std::string castTo(LangOptions const& langOpts, std::string const &orig_expr, std::string const &cast_type)
  {
      if (langOpts.CPlusPlus == 1) {
          return "reinterpret_cast<" + cast_type + ">(" + orig_expr + ")";
@@ -1072,7 +1072,7 @@ public:
     ASTContext &ast;
     Rewriter *Rewrite;
     SourceManager *SM;
-    LangOptions langOpts;
+    LangOptions const &langOpts;
     bool whitelistExceptions;
 
     DeclIterator(llvm::raw_ostream& xOut, DiagnosticsEngine *_Diags, ASTContext &xAst, Rewriter *rewriter, SourceManager *sm, const LangOptions &_langOpts, std::set<const Type *> &referenced_types, std::set<TraceCall *> &global_traces) : Out(xOut), Diags(_Diags), ast(xAst), Rewrite(rewriter), SM(sm), langOpts(_langOpts), whitelistExceptions(false), referencedTypes(referenced_types), globalTraces(global_traces)  {};
@@ -1093,7 +1093,7 @@ public:
     ASTContext &ast;
     Rewriter *Rewrite;
     SourceManager *SM;
-    LangOptions langOpts;
+    LangOptions const &langOpts;
     Decl *D;
     bool whitelistExceptions;
 
@@ -1206,7 +1206,7 @@ bool DeclIterator::VisitVarDecl(VarDecl *D) {
     return true;
 }
 
-static SourceRange getDeclRange(SourceManager *SM, const LangOptions *langOpts, const clang::Decl *D, bool with_semicolon)
+static SourceRange getDeclRange(SourceManager *SM, LangOptions const &langOpts, const clang::Decl *D, bool with_semicolon)
 {
     clang::SourceLocation SLoc = SM->getExpansionLoc(D->getLocStart());
 	clang::SourceLocation ELoc = SM->getExpansionLoc(D->getLocEnd());
@@ -1218,7 +1218,7 @@ static SourceRange getDeclRange(SourceManager *SM, const LangOptions *langOpts, 
 	std::pair<clang::FileID, unsigned> LocInfo = SM->getDecomposedLoc(Loc);
 	llvm::StringRef Buffer = SM->getBufferData(LocInfo.first);
 	const char *StrData = Buffer.data()+LocInfo.second;
-	Lexer TheLexer(Loc, *langOpts, Buffer.begin(), StrData, Buffer.end());
+	Lexer TheLexer(Loc, langOpts, Buffer.begin(), StrData, Buffer.end());
 	Token token;
 	TheLexer.LexFromRawLexer(token);
 	end += token.getLength();
@@ -1433,7 +1433,7 @@ public:
             return;
         }
 
-        SourceRange range = getDeclRange(SM, &C.getLangOpts(), record_struct, true);
+        SourceRange range = getDeclRange(SM, C.getLangOpts(), record_struct, true);
         Rewrite.InsertText(range.getEnd(), global_traces.str());
     }
 
@@ -1445,16 +1445,17 @@ public:
             return;
         }
 
-        SourceRange range = getDeclRange(SM, &C.getLangOpts(), record_struct, true);
+        SourceRange range = getDeclRange(SM, C.getLangOpts(), record_struct, true);
         Rewrite.InsertText(range.getEnd(), type_definition.str());
     }
 
     void HandleTranslationUnit(ASTContext &C) {
-        Rewrite.setSourceMgr(C.getSourceManager(), C.getLangOpts());
+            LangOptions const &langOpts = C.getLangOpts();
+        Rewrite.setSourceMgr(C.getSourceManager(), langOpts);
         SM = &C.getSourceManager();
         MainFileID = SM->getMainFileID();
-        DeclIterator decliterator(Out, Diags, C, &Rewrite, SM, C.getLangOpts(), referencedTypes, globalTraces);
-        decliterator.Visit(C.getTranslationUnitDecl());
+        DeclIterator decliterator(Out, Diags, C, &Rewrite, SM, langOpts, referencedTypes, globalTraces);
+        decliterator.TraverseDecl(C.getTranslationUnitDecl());
         buildReferencedTypes();
         buildGlobalTraces();
         if (const RewriteBuffer *RewriteBuf =
