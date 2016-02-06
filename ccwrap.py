@@ -66,7 +66,7 @@ def get_arch_triplet(compiler):
             target = line.split(':')[1].strip()
             if target.startswith('arm'):
                 return ['-triple', 'armv7-unknown-linux-gnueabi']
-            elif target.startswith(('x86', 'i686')):
+            elif target.startswith(('x86', 'i686', 'i486')):
                 return []
             else:
                 raise UnsupportedTarget(target)
@@ -190,9 +190,10 @@ def main():
         if os.getenv("TRACE_NO_UNLINK_PPFILE", "") == "":
             # Delete the pp.i file only if the clang invocation was successful
             if clang_ret == 0:
-                if os.path.exists(out_pp_file):
-                    os.unlink(out_pp_file)
-                else:
-                    print "File does not exist",out_pp_file
+               try:
+                   os.unlink(out_pp_file)
+               except OSError:
+                   pass
+
 if __name__ == "__main__":
     sys.exit(main())
