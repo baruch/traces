@@ -396,7 +396,7 @@ static int trace_dumper_writev(int fd, const struct iovec *iov, int iovcnt)
 #define for_each_open_stream(conf, _i_, _fd_)                                \
     int fds[2] = {conf->record_file.fd, -1};                                 \
     if (conf->dump_to_network) { fds[1] = conf->remote_dumper_socket;};      \
-    for (({_i_ = 0; _fd_ = fds[_i_];}); _i_ < ARRAY_LENGTH(fds); ({_i_++; _fd_ = fds[_i_];}))  
+    for (({_i_ = 0; _fd_ = fds[_i_];}); _i_ < ARRAY_LENGTH(fds) && _fd_ != -1; ({_i_++; _fd_ = fds[_i_];}))
 
 static int do_writev(int fd, const struct iovec *iov, int iovcnt)
 {
