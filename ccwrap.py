@@ -20,8 +20,8 @@ import re
 import subprocess32
 
 from ldwrap import main as ldmodwrap_main
-plugin_path = os.getenv('TRACE_INSTRUMENTOR', os.path.join(os.path.dirname(sys.argv[0]), "trace_instrumentor/trace_instrumentor.so"))
-clang_path = os.getenv('TRACE_CLANG_PATH', "clang")
+plugin_path = os.getenv('TRACE_INSTRUMENTOR', os.path.join(os.path.dirname(sys.argv[0]), "trace_instrumentor", ".libs", "libtrace_instrumentor.so"))
+clang_path = os.getenv('TRACE_CLANG_PATH', "clang-3.7")
 
 def spawn(args):
     print "going to spawn", " ".join(args)
@@ -115,7 +115,6 @@ def handle_dependency_option(args, c_index, o_index, o_file):
 def main():
     args = sys.argv[1:]
 
-    args.insert(0,"g++")
     print "Start of CCWRAP"," ".join(args)
         
     if '-c' not in args:
