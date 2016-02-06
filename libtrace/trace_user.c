@@ -31,7 +31,6 @@ Copyright 2012 Yotam Rubin <yotamrubin@gmail.com>
 #include "macros.h"
 #include "trace_lib.h"
 #include "trace_user.h"
-#include "halt.h"
 
 struct trace_buffer *current_trace_buffer = NULL;
 
